@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1067672649093",
+    "firebase_url": "https://icm-trabalho1.firebaseio.com",
+    "project_id": "icm-trabalho1",
+    "storage_bucket": "icm-trabalho1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1067672649093:android:d95844208da79f64ca18ec",
+        "android_client_info": {
+          "package_name": "com.example.passadicosspot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1067672649093-tq2sqajvg6ej5pnnm6o2fpsop4vqk6j3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtRYZQkNDE5hMm3l3PxxTUoPlziWq1VaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1067672649093-tq2sqajvg6ej5pnnm6o2fpsop4vqk6j3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
