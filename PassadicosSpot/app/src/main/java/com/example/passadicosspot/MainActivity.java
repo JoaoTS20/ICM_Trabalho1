@@ -1,23 +1,33 @@
 package com.example.passadicosspot;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 
 public class MainActivity extends AppCompatActivity {
 
 
-
-
+    //Stress
+    TextView s;
 
     public static final String ANONYMOUS = "anonymous";
     private String mUsername;
@@ -28,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private FirebaseFirestore db= FirebaseFirestore.getInstance();
+    //private FirebaseRecyclerAdapter<Imagem, MessageViewHolder> mFirebaseAdapter;
 
 
 
@@ -58,5 +70,27 @@ public class MainActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
+
+        //Obter Dados
+        s= (TextView) findViewById(R.id.text);
+
+        db.collection("Imagens")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                Imagem x= document.toObject(Imagem.class);
+                                x.setId(document.getId());
+                                Log.d("SucessoDB", "Sucesso em Obter os Dados!");
+                                s.append(document.getId() +" ->"+ x.toString());
+                            }
+                        } else{
+                            Log.d("ErroDB", "Erro em Obter os Dados!");
+                        }
+                    }
+                });
+
     }
 }
