@@ -1,18 +1,28 @@
 package com.example.passadicosspot;
 
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.ViewHolder> {
-
+    StorageReference x;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -29,6 +39,23 @@ public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.Vi
         holder.user.setText(model.getUsername());
         holder.description.setText(model.getDescription());
 
+        x = FirebaseStorage.getInstance().getReferenceFromUrl(model.getPhotoURL());
+        x.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()){
+                    String dowmloadUrl = task.getResult().toString();
+                    Glide.with(holder.PhotoURL)
+                            .load(dowmloadUrl)
+                            .into(holder.PhotoURL);
+
+                }else{
+                    Log.w("ErroImagem", "Getting download url was not successful.",
+                            task.getException());
+                }
+            }
+        });
+
     }
 
     @NonNull
@@ -41,10 +68,12 @@ public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView user, description;
+        ImageView PhotoURL;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             user= itemView.findViewById(R.id.user);
             description = itemView.findViewById(R.id.description);
+            PhotoURL= itemView.findViewById(R.id.imageView);
         }
     }
 }
