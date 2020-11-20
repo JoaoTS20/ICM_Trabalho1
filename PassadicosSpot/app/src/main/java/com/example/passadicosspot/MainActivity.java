@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-        create_fead();
+        //create_fead();
+        create_map();
     }
 
 
@@ -118,7 +119,14 @@ public class MainActivity extends AppCompatActivity {
         // Complete the changes added above
         ft.commit();
 
-
-
+    }
+    public void create_map(){
+        Fragment x = MapFragment.newInstance();
+        //Fragment x = FragmentA_list.newInstance(cars);
+        //ft.replace(R.id.your_placeholder, Fragment_B_info.newInstance("Porto"));
+        ft.replace(R.id.your_placeholder, x);
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
     }
 }

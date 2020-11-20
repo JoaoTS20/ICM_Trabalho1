@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.passadicosspot"
-        minSdkVersion 26
+        minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -48,6 +48,9 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:26.1.0')
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.google.maps.android:android-maps-utils:2.1.0'
+    implementation 'com.google.maps.android:maps-utils-ktx:2.2.0'
 
 }
 
