@@ -2,9 +2,11 @@ package com.example.passadicosspot;
 
 import com.google.firebase.firestore.GeoPoint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class Imagem {
+public class Imagem implements Serializable {
 
     private String id;
     private String Description;
@@ -13,12 +15,13 @@ public class Imagem {
     private String Username;
     private ArrayList<String> AnimaisIdentificados;
     private GeoPoint Location;
+    private java.util.Date Date;
 
     public Imagem() {
 
     }
 
-    public Imagem(String id, String Description, String Especialista, GeoPoint Location, String PhotoURL, String Username, ArrayList<String> AnimaisIdentificados ){
+    public Imagem(String id, String Description, String Especialista, GeoPoint Location, String PhotoURL, String Username, ArrayList<String> AnimaisIdentificados, java.util.Date Date){
         this.id=id;
         this.Description=Description;
         this.Especialista=Especialista;
@@ -26,6 +29,7 @@ public class Imagem {
         this.PhotoURL =PhotoURL;
         this.Username=Username;
         this.AnimaisIdentificados=AnimaisIdentificados;
+        this.Date=Date;
     }
 
     public String getId() {
@@ -84,6 +88,14 @@ public class Imagem {
         Location = location;
     }
 
+    public java.util.Date getDate() {
+        return Date;
+    }
+
+    public void setDate(java.util.Date date) {
+        Date = date;
+    }
+
     @Override
     public String toString() {
         return "Imagem{" +
@@ -94,6 +106,7 @@ public class Imagem {
                 ", Username='" + Username + '\'' +
                 ", AnimaisIdentificados=" + AnimaisIdentificados +
                 ", Location=" + Location +
+                ", Date=" + Date +
                 '}';
     }
 }

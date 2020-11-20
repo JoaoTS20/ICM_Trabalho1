@@ -2,6 +2,8 @@ package com.example.passadicosspot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,8 +24,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
+
 
 
     //Stress
@@ -40,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
     //private FirebaseRecyclerAdapter<Imagem, MessageViewHolder> mFirebaseAdapter;
+
+    //Variables for data manipulation
+    private ArrayList<Imagem> Array_Images = new ArrayList<>();
+
+    //Variables for App stuff
+    private FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 
 
@@ -83,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             for(QueryDocumentSnapshot document : task.getResult()){
                                 Imagem x= document.toObject(Imagem.class);
                                 x.setId(document.getId());
+                                Array_Images.add(x);
                                 Log.d("SucessoDB", "Sucesso em Obter os Dados!");
                                 s.append(document.getId() +" ->"+ x.toString());
                             }
@@ -91,6 +103,22 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+        create_fead();
+    }
+
+
+
+
+    public void create_fead(){
+        Fragment x = FeedFragment.newInstance();
+        //Fragment x = FragmentA_list.newInstance(cars);
+        //ft.replace(R.id.your_placeholder, Fragment_B_info.newInstance("Porto"));
+        ft.replace(R.id.your_placeholder, x);
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+
+
 
     }
 }
