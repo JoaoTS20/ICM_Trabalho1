@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,18 +47,23 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -68,6 +75,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     static final Map<String, Bitmap> mbitmaps = new HashMap<>();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
+    public static String baseURL = "gs"; // TODO: pôr link certo aqui
+    private LocationManager mLocationManager;
     public MapFragment() {
         // Required empty public constructor
     }
@@ -93,6 +102,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 dispatchTakePictureIntent();
             }
         });
+        mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+
+        //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
         return view;
     }
 
@@ -191,6 +204,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
+        byte[] byteArray =  out.toByteArray();
+        storageReference.putBytes(byteArray).addOnCompleteListener(getActivity(),(task)->{
+            if (task.isSuccessful()){
+                String name = task.getResult().getMetadata().getReference().getName();
+                String imageUrl = baseURL + name;
+                //TODO: pôr permissões
+                //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Log.d("kekw",name);
+                //TODO: criar classe IMAGEM e meter detalhes
+                        /*.addOnCompleteListener(getActivity(),
+                                (task2) -> {
+                                    if (task2.isSuccessful()) {
+                                        Imagem
+                                    }
+                                });*/
+            }
+        });
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,6 +237,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     .title("MyHouse")
                     .snippet("1")
             );
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = ((MainActivity)getActivity()).getUsename() +"_"+ timeStamp + ".png";
+            StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
+            putImageInStorage(x,imageBitmap,"");
+
         }
     }
 

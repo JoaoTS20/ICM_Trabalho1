@@ -129,4 +129,8 @@ public class MainActivity extends AppCompatActivity {
         // Complete the changes added above
         ft.commit();
     }
+
+    public String getUsename(){
+        return mUsername;
+    }
 }
