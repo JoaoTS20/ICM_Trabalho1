@@ -67,6 +67,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+
     private GoogleMap mMap;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private List<Imagem> listaImages = new ArrayList<>();
@@ -75,8 +76,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     static final Map<String, Bitmap> mbitmaps = new HashMap<>();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
-    public static String baseURL = "gs"; // TODO: pôr link certo aqui
+    public static String baseURL = "gs://icm-trabalho1.appspot.com/"; // TODO: pôr link certo aqui (DOne)
     private LocationManager mLocationManager;
+    public static ArrayList<String> ArrayVazio = new ArrayList<>();
     public MapFragment() {
         // Required empty public constructor
     }
@@ -137,6 +139,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 });
     }
+
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -213,13 +218,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 String name = task.getResult().getMetadata().getReference().getName();
                 String imageUrl = baseURL + name;
                 //TODO: pôr permissões
-                //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                //Desta forma acho que resulta
+                try {
+                    Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }catch (SecurityException e){
+                    Log.d("Location",this.getContext().toString());
+                }
+
                 Log.d("kekw",name);
                 //TODO: criar classe IMAGEM e meter detalhes
                         /*.addOnCompleteListener(getActivity(),
                                 (task2) -> {
                                     if (task2.isSuccessful()) {
-                                        Imagem
+                                        //Com Imagem alterado para a forma mais correta sem o id no Construtor :
+                                        Imagem a = new Imagem(Description,"",Location,ImageURL,Username, ArrayVazio, timeStamp)
                                     }
                                 });*/
             }
