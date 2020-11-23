@@ -300,5 +300,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         public View getInfoContents(Marker marker) {
             return null;
         }
+
+
     }
 }
