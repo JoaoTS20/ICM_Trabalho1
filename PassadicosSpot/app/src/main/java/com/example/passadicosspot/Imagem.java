@@ -20,9 +20,7 @@ public class Imagem implements Serializable {
     public Imagem() {
 
     }
-    // TODO: Remover id do Construtor e consequentes no FeedFragment e MainActivity e MapFragment
-    public Imagem(String id, String Description, String Especialista, GeoPoint Location, String PhotoURL, String Username, ArrayList<String> AnimaisIdentificados, java.util.Date Date){
-        this.id=id;
+    public Imagem(String Description, String Especialista, GeoPoint Location, String PhotoURL, String Username, ArrayList<String> AnimaisIdentificados, java.util.Date Date){
         this.Description=Description;
         this.Especialista=Especialista;
         this.Location=Location;

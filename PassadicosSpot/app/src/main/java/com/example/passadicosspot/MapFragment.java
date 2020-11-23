@@ -15,6 +15,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Looper;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -232,13 +234,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
         String imageFileName = ((MainActivity_Navigation)getActivity()).getUsename() +"_"+ timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
         Location location = null;
-        //TODO: pôr permissões
-        try {
-            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }catch (SecurityException e){
-            Log.d("Location",this.getContext().toString());
-            return;
+        //TODO: pôr permissões ACHO QUE FUNCIONA
+        if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this.getActivity(),
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    100);
         }
+        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
         putImageInStorage(x,bitmap,"",description,location);
         Marker melbourne = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
@@ -257,11 +260,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
             if (task.isSuccessful()){
                 String name = task.getResult().getMetadata().getReference().getName();
                 String imageUrl = baseURL + name;
-
+                Date timeStamp = new Date(); //Já dá a forma certa do date
                 //Desta forma acho que resulta
-                //TODO Pôr timestamp não sei como ir buscar o agora
-                //Imagem a = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
-                //TODO Por favor põe aqui a cena de enviar os dados pró Firebase
+                //Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
+                //db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
                 Log.d("kekw",name);
             }
             else{
