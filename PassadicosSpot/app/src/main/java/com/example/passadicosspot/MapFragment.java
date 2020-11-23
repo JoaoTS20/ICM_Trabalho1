@@ -69,7 +69,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDescriptionFragment.OnDialogDismissListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, DialogDescriptionFragment.OnDialogDismissListener {
 
     private GoogleMap mMap;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -78,13 +78,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     static final Map<String, ImageView> mImageViews = new HashMap<>();
     static final Map<String, Bitmap> mbitmaps = new HashMap<>();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private FirebaseFirestore db= FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static String baseURL = "gs://icm-trabalho1.appspot.com/";
     private LocationManager mLocationManager;
     public static ArrayList<String> ArrayVazio = new ArrayList<>();
+    private SupportMapFragment mapFragment;
+
     public MapFragment() {
         // Required empty public constructor
     }
+
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
         return fragment;
@@ -107,7 +110,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
             }
         });
         mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
-
+        if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    100);
+        }
         //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         return view;
@@ -117,17 +124,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //checkLocationPermission();
+        carregarImagens();
+    }
 
+    private void carregarImagens(){
+        listaImages = new ArrayList<>();
         db.collection("Imagens")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot document : task.getResult()){
-                                Imagem x= document.toObject(Imagem.class);
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Imagem x = document.toObject(Imagem.class);
                                 x.setId(document.getId());
                                 listaImages.add(x);
                                 Log.d("SucessoDB", "Sucesso em Obter os Dados!");
@@ -135,7 +146,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
                             }
 
                             mapFragment.getMapAsync(MapFragment.this);
-                        } else{
+                        } else {
                             Log.d("ErroDB", "Erro em Obter os Dados!");
                         }
                     }
@@ -143,19 +154,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     }
 
 
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         PolylineOptions pOptions = new PolylineOptions();
         pOptions.addAll(Arrays.asList(ProjectConstants.route));
         Polyline polyline1 = googleMap.addPolyline(pOptions);
         LatLng MELBOURNE = new LatLng(40.9928911, -8.2113895);
-        for (int j = 0; j < listaImages.size();j++){
+        for (int j = 0; j < listaImages.size(); j++) {
             Imagem i = listaImages.get(j);
             mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(i.getLocation().getLatitude(),i.getLocation().getLongitude()))
+                    .position(new LatLng(i.getLocation().getLatitude(), i.getLocation().getLongitude()))
                     .title(i.getUsername())
                     .snippet(String.valueOf(j))
             );
@@ -165,14 +175,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
             x.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         String downloadUrl = task.getResult().toString();
-                                //Looper.prepare();
+                        //Looper.prepare();
 
                         Glide.with(imageView)
                                 .asBitmap()
                                 .load(downloadUrl)
-                                .into(new CustomTarget<Bitmap>(){
+                                .into(new CustomTarget<Bitmap>() {
 
                                     @Override
                                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -185,17 +195,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
                                     }
                                 });
 
-                        mImageViews.put(String.valueOf(key),imageView);
-                        Log.d("kekw","😂 successful");
+                        mImageViews.put(String.valueOf(key), imageView);
+                        Log.d("kekw", "😂 successful");
 
-                    }else{
+                    } else {
                         Log.w("ErroImagem", "Getting download url was not successful.",
                                 task.getException());
                     }
                 }
             });
-            mImages.put(String.valueOf(j),i);
-            Log.d("kekw",i.toString());
+            mImages.put(String.valueOf(j), i);
+            Log.d("kekw", i.toString());
         }
         mMap.setInfoWindowAdapter(new Custom_InfoAdapter(mImages));
         //melbourne.showInfoWindow();
@@ -204,7 +214,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
         u.setZoomControlsEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.9689, -8.20364), 12.75f));
     }
-
 
 
     private void dispatchTakePictureIntent() {
@@ -220,8 +229,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            DialogDescriptionFragment d=new DialogDescriptionFragment(imageBitmap,this);
-            d.show(getChildFragmentManager(),"tag");
+            DialogDescriptionFragment d = new DialogDescriptionFragment(imageBitmap, this);
+            d.show(getChildFragmentManager(), "tag");
         }
     }
 
@@ -229,26 +238,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     public void onDialogDismissListener(Bitmap bitmap, String description) {
         mbitmaps.put("1", bitmap);
 
-        Log.d("kekw",description);
+        Log.d("kekw", description);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = ((MainActivity_Navigation)getActivity()).getUsename() +"_"+ timeStamp + ".png";
+        String imageFileName = ((MainActivity_Navigation) getActivity()).getUsename() + "_" + timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
         Location location = null;
         //TODO: pôr permissões ACHO QUE FUNCIONA
-        if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions(this.getActivity(),
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    100);
+
+        try {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }catch (SecurityException e){
+            return;
         }
-        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         putImageInStorage(x,bitmap,"",description,location);
-        Marker melbourne = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(description)
-                .snippet(String.valueOf(mImages.size()))
-        );
-        Log.d("kekw","pog");
+        carregarImagens();
     }
 
     private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key, String description, final Location location){
@@ -262,8 +266,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
                 String imageUrl = baseURL + name;
                 Date timeStamp = new Date(); //Já dá a forma certa do date
                 //Desta forma acho que resulta
-                //Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
-                //db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
+                Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
+                db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
                 Log.d("kekw",name);
             }
             else{
