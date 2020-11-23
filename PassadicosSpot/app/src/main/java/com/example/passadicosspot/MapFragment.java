@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -66,7 +67,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDescriptionFragment.OnDialogDismissListener {
 
     private GoogleMap mMap;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -209,22 +210,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key){
+    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key, String description, final Location location){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
         byte[] byteArray =  out.toByteArray();
+
         storageReference.putBytes(byteArray).addOnCompleteListener(getActivity(),(task)->{
             if (task.isSuccessful()){
                 String name = task.getResult().getMetadata().getReference().getName();
                 String imageUrl = baseURL + name;
                 //TODO: pôr permissões
                 //Desta forma acho que resulta
-                try {
-                    Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                }catch (SecurityException e){
-                    Log.d("Location",this.getContext().toString());
-                }
-
+                //new Date();
+                //Imagem a = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity)getActivity()).getUsename(), ArrayVazio, timeStamp);
                 Log.d("kekw",name);
                 //TODO: criar classe IMAGEM e meter detalhes
                         /*.addOnCompleteListener(getActivity(),
@@ -243,18 +241,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mbitmaps.put("1", imageBitmap);
-            Marker melbourne = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(40.9638061, -8.1775834))
-                    .title("MyHouse")
-                    .snippet("1")
-            );
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = ((MainActivity)getActivity()).getUsename() +"_"+ timeStamp + ".png";
-            StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
-            putImageInStorage(x,imageBitmap,"");
-
+            DialogDescriptionFragment d=new DialogDescriptionFragment(imageBitmap,this);
+            d.show(getChildFragmentManager(),"tag");
         }
+    }
+
+    @Override
+    public void onDialogDismissListener(Bitmap bitmap, String description) {
+        mbitmaps.put("1", bitmap);
+        Marker melbourne = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(40.9638061, -8.1775834))
+                .title("MyHouse")
+                .snippet("1")
+        );
+        Log.d("kekw",description);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = ((MainActivity)getActivity()).getUsename() +"_"+ timeStamp + ".png";
+        StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
+        Location location = null;
+        try {
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }catch (SecurityException e){
+            Log.d("Location",this.getContext().toString());
+            return;
+        }
+        putImageInStorage(x,bitmap,"",description,location);
     }
 
     private class Custom_InfoAdapter implements GoogleMap.InfoWindowAdapter{
@@ -280,21 +291,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public View getInfoContents(Marker marker) {
-            return null;
-        }
-    }
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            Log.d("bananas","😀"+src);
             return null;
         }
     }
