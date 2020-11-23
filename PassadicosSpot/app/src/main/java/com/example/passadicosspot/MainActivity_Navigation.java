@@ -4,15 +4,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -28,6 +34,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
     private GoogleSignInClient mSignInClient;
+    private String TypeUser;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -59,6 +66,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
             return;
         } else {
             mUsername = mFirebaseUser.getDisplayName();
+
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
@@ -69,8 +77,23 @@ public class MainActivity_Navigation extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
-
-
+        //TODO: FAZER esta seleção com firestore em vez daquele if com whereEqualsto
+        db.collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        User x= document.toObject(User.class);
+                        if(x.getUsername().equals(mUsername)){
+                            TypeUser=x.getTipo();
+                        }
+                        Log.d("TYPE", "TYPE:"+ TypeUser );
+                    }
+                } else{
+                    Log.d("ErroDB", "Erro em Obter os Dados!");
+                }
+            }
+        });
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         if (getSupportActionBar() != null) {
