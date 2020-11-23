@@ -86,4 +86,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    public String getUsename(){
+        return mUsername;
+    }
 }

@@ -77,13 +77,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     static final Map<String, Bitmap> mbitmaps = new HashMap<>();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
-    public static String baseURL = "gs://icm-trabalho1.appspot.com/"; // TODO: pôr link certo aqui (DOne)
+    public static String baseURL = "gs://icm-trabalho1.appspot.com/";
     private LocationManager mLocationManager;
     public static ArrayList<String> ArrayVazio = new ArrayList<>();
     public MapFragment() {
         // Required empty public constructor
     }
-    // TODO: Rename and change types and number of parameters
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
         return fragment;
@@ -204,37 +203,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.9689, -8.20364), 12.75f));
     }
 
+
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key, String description, final Location location){
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
-        byte[] byteArray =  out.toByteArray();
 
-        storageReference.putBytes(byteArray).addOnCompleteListener(getActivity(),(task)->{
-            if (task.isSuccessful()){
-                String name = task.getResult().getMetadata().getReference().getName();
-                String imageUrl = baseURL + name;
-                //TODO: pôr permissões
-                //Desta forma acho que resulta
-                //new Date();
-                //Imagem a = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity)getActivity()).getUsename(), ArrayVazio, timeStamp);
-                Log.d("kekw",name);
-                //TODO: criar classe IMAGEM e meter detalhes
-                        /*.addOnCompleteListener(getActivity(),
-                                (task2) -> {
-                                    if (task2.isSuccessful()) {
-                                        //Com Imagem alterado para a forma mais correta sem o id no Construtor :
-                                        Imagem a = new Imagem(Description,"",Location,ImageURL,Username, ArrayVazio, timeStamp)
-                                    }
-                                });*/
-            }
-        });
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -249,16 +226,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
     @Override
     public void onDialogDismissListener(Bitmap bitmap, String description) {
         mbitmaps.put("1", bitmap);
-        Marker melbourne = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(40.9638061, -8.1775834))
-                .title("MyHouse")
-                .snippet("1")
-        );
+
         Log.d("kekw",description);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = ((MainActivity)getActivity()).getUsename() +"_"+ timeStamp + ".png";
+        String imageFileName = ((MainActivity_Navigation)getActivity()).getUsename() +"_"+ timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
         Location location = null;
+        //TODO: pôr permissões
         try {
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }catch (SecurityException e){
@@ -266,8 +240,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,DialogDe
             return;
         }
         putImageInStorage(x,bitmap,"",description,location);
+        Marker melbourne = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title(description)
+                .snippet(String.valueOf(mImages.size()))
+        );
+        Log.d("kekw","pog");
     }
 
+    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key, String description, final Location location){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
+        byte[] byteArray =  out.toByteArray();
+
+        storageReference.putBytes(byteArray).addOnCompleteListener(getActivity(),(task)->{
+            if (task.isSuccessful()){
+                String name = task.getResult().getMetadata().getReference().getName();
+                String imageUrl = baseURL + name;
+
+                //Desta forma acho que resulta
+                //TODO Pôr timestamp não sei como ir buscar o agora
+                //Imagem a = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
+                //TODO Por favor põe aqui a cena de enviar os dados pró Firebase
+                Log.d("kekw",name);
+            }
+            else{
+                Log.d("kekw","Houston we have a problem");
+            }
+        });
+    }
     private class Custom_InfoAdapter implements GoogleMap.InfoWindowAdapter{
         private final Map<String,Imagem> mapaImagens;
         public Custom_InfoAdapter(final Map<String,Imagem> m){
