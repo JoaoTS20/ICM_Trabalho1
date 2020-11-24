@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/feedFragment"
-        android:name="com.example.passadicosspot.FeedFragment"
+        android:name="com.example.passadicosspot.Fragments.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed" />
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.passadicosspot.MapFragment"
+        android:name="com.example.passadicosspot.Fragments.MapFragment"
         android:label="MapFragment" />
     <navigation android:id="@+id/navigation" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.passadicosspot.ProfileFragment"
+        android:name="com.example.passadicosspot.Fragments.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

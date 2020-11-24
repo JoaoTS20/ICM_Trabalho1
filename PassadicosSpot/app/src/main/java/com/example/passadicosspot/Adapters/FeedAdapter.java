@@ -1,4 +1,4 @@
-package com.example.passadicosspot;
+package com.example.passadicosspot.Adapters;
 
 import android.net.Uri;
 import android.util.Log;
@@ -13,11 +13,12 @@ import com.bumptech.glide.Glide;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.passadicosspot.R;
+import com.example.passadicosspot.classes.Imagem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
