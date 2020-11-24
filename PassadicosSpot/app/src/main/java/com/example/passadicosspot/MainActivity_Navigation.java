@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import androidx.annotation.NonNull;
@@ -96,8 +97,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
 
         //TODO: IF NORMAL SUBSCREVER O NORMAL IF PERITO SUBSCREVER ESTE
         FirebaseMessaging.getInstance().subscribeToTopic("UserPost");
-
-
+        //FirebaseMessaging.getInstance().send(new RemoteMessage.Builder("sad").setMessageType("Notification").build());
 
 
 

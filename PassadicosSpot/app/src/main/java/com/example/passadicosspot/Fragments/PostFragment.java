@@ -16,14 +16,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.passadicosspot.Adapters.AnimalListAdapter;
+import com.example.passadicosspot.MainActivity;
+import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -54,6 +58,7 @@ public class PostFragment extends Fragment {
     private Button btnEdit;
     private LinkedList<String> mAnimalList;
     private RecyclerView recyclerView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public PostFragment() {
         // Required empty public constructor
@@ -190,7 +195,7 @@ public class PostFragment extends Fragment {
     public void confirmImagem(){
         //TODO: Função de enviar os dados para lá
         if (new LinkedList<>(mParam1.getAnimaisIdentificados()).equals(mAnimalList)){
-            //TODO: Toast são iguais
+            Toast.makeText(getActivity(), "Animais Identificados iguais!", Toast.LENGTH_SHORT).show();
         }
         else {
             String username = mParam1.getUsername();
@@ -201,6 +206,7 @@ public class PostFragment extends Fragment {
             String photoURL =mParam1.getPhotoURL();
             ArrayList<String> animais = new ArrayList<>(mAnimalList);
             Imagem novaImagem = new Imagem(description, especialista, location, photoURL, username, animais, date);
+            db.collection("Imagens").document(mParam1.getId()).update("animaisIdentificados",animais);
 
             //TODO: Inserir nova Imagem com Query usando a antiga em mParam1
 
