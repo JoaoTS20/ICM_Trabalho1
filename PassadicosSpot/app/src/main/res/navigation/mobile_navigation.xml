@@ -13,11 +13,32 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.passadicosspot.Fragments.MapFragment"
-        android:label="MapFragment" />
+        android:label="MapFragment" >
+        <action
+            android:id="@+id/action_mapFragment_to_postFragment"
+            app:destination="@id/postFragment"
+            app:launchSingleTop="false" />
+    </fragment>
     <navigation android:id="@+id/navigation" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.passadicosspot.Fragments.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.example.passadicosspot.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post"
+        >
+        <argument
+            android:name="Image"
+            app:argType="com.example.passadicosspot.classes.Imagem" />
+        <argument
+            android:name="bitmap"
+            app:argType="android.graphics.Bitmap" />
+        <argument
+            android:name="user"
+            app:argType="com.example.passadicosspot.classes.User" />
+    </fragment>
 </navigation>

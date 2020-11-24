@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -28,9 +30,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.passadicosspot.MainActivity_Navigation;
+import com.example.passadicosspot.PostFragment;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.ProjectConstants;
+import com.example.passadicosspot.classes.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -151,7 +155,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        final View random_view = new View(getContext());
         PolylineOptions pOptions = new PolylineOptions();
         pOptions.addAll(Arrays.asList(ProjectConstants.route));
         Polyline polyline1 = googleMap.addPolyline(pOptions);
@@ -207,6 +211,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         u.setTiltGesturesEnabled(false);
         u.setZoomControlsEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.9689, -8.20364), 12.75f));
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                //FragmentTransaction ft= getActivity().getSupportFragmentManager().beginTransaction();
+                //listaImages.get(Integer.valueOf(marker.getSnippet()));
+                Log.d("kekw",mbitmaps.get(marker.getSnippet()).toString());
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("param1", listaImages.get(Integer.valueOf(marker.getSnippet())));
+                bundle.putParcelable("param2", mbitmaps.get(marker.getSnippet()));
+                //TODO: Ir buscar user verdadeiro
+                bundle.putSerializable("param3", new User(marker.getTitle(),"especialista"));
+                Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_mapFragment_to_postFragment, bundle);
+
+            }
+        });
     }
 
 
