@@ -1,8 +1,10 @@
 package com.example.passadicosspot.Fragments;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -14,9 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -94,8 +101,9 @@ public class PostFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
         textViewAuthor.setText(textViewAuthor.getText().toString() + mParam1.getUsername());
         textViewDescription.setText(textViewDescription .getText().toString() + mParam1.getDescription());
-        if (mParam1.getEspecialista().equals("")) {
-            if(mParam3.getTipo().equals("especialista")){
+        Log.d("kekw","😎"+mParam3.getTipo());
+        if (mParam1.getEspecialista().equals("") || mParam1.getEspecialista().equals(mParam3.getTipo())) {
+            if(mParam3.getTipo().equals("Perito")){
                 btnEdit = view.findViewById(R.id.btnEspecialista);
                 btnEdit.setVisibility(View.VISIBLE);
                 btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +144,23 @@ public class PostFragment extends Fragment {
         else{
             textViewEspecialista.setText(textViewEspecialista.getText().toString() + mParam1.getEspecialista());
         }
-        imageView.setImageBitmap(mParam2);
+        StorageReference x = FirebaseStorage.getInstance().getReferenceFromUrl(mParam1.getPhotoURL());
+        x.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()){
+                    String downloadUrl = task.getResult().toString();
+                    Glide.with(imageView)
+                            .load(downloadUrl)
+                            .into(imageView);
+
+                }else{
+                    Log.w("ErroImagem", "Getting download url was not successful.",
+                            task.getException());
+                }
+            }
+        });
+        //imageView.setImageBitmap(mParam2);
         return view;
     }
 }
