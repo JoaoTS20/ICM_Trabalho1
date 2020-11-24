@@ -124,7 +124,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         carregarImagens();
     }
 
-    private void carregarImagens(){
+    private void carregarImagens() {
         listaImages = new ArrayList<>();
         db.collection("Imagens")
                 .get()
@@ -213,14 +213,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             public void onInfoWindowClick(Marker marker) {
                 //FragmentTransaction ft= getActivity().getSupportFragmentManager().beginTransaction();
                 //listaImages.get(Integer.valueOf(marker.getSnippet()));
-                Log.d("kekw",mbitmaps.get(marker.getSnippet()).toString());
+                Log.d("kekw", mbitmaps.get(marker.getSnippet()).toString());
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("param1", listaImages.get(Integer.valueOf(marker.getSnippet())));
-                bundle.putSerializable("param2",  ((MainActivity_Navigation)getActivity()).getUser());
+                bundle.putSerializable("param2", ((MainActivity_Navigation) getActivity()).getUser());
                 Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_mapFragment_to_postFragment, bundle);
             }
         });
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
 
