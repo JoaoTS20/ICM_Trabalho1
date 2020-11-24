@@ -217,8 +217,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("param1", listaImages.get(Integer.valueOf(marker.getSnippet())));
-                bundle.putParcelable("param2", mbitmaps.get(marker.getSnippet()));
-                bundle.putSerializable("param3",  ((MainActivity_Navigation)getActivity()).getUser());
+                bundle.putSerializable("param2",  ((MainActivity_Navigation)getActivity()).getUser());
                 Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_mapFragment_to_postFragment, bundle);
             }
         });

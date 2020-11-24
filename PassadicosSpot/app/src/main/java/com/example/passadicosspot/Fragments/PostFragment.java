@@ -1,6 +1,5 @@
 package com.example.passadicosspot.Fragments;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -44,12 +43,10 @@ public class PostFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String ARG_PARAM3 = "param3";
 
     // TODO: Rename and change types of parameters
     private Imagem mParam1;
-    private Bitmap mParam2;
-    private User mParam3;
+    private User mParam2;
     private EditText editText;
     private Button btnAdd;
     private Button btnConfirm;
@@ -71,12 +68,11 @@ public class PostFragment extends Fragment {
      * @return A new instance of fragment PostFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PostFragment newInstance(Imagem param1, Bitmap param2, User param3) {
+    public static PostFragment newInstance(Imagem param1, User param2) {
         PostFragment fragment = new PostFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, param1);
-        args.putParcelable(ARG_PARAM2, param2);
-        args.putSerializable(ARG_PARAM3, param3);
+        args.putSerializable(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,9 +82,8 @@ public class PostFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = (Imagem) getArguments().getSerializable(ARG_PARAM1);
-            mParam2 = getArguments().getParcelable(ARG_PARAM2);
             //Log.d("kekw","🤡"+mParam2.toString());
-            mParam3 = (User) getArguments().getSerializable(ARG_PARAM3);
+            mParam2 = (User) getArguments().getSerializable(ARG_PARAM2);
         }
     }
 
@@ -98,7 +93,7 @@ public class PostFragment extends Fragment {
         // Inflate the layout for this fragment
         Log.d("kekw","🤡1"+mParam1.toString());
         Log.d("kekw","🤡2"+mParam2.toString());
-        Log.d("kekw","🤡3"+mParam3.toString());
+        Log.d("kekw","🤡3"+ mParam2.toString());
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         ImageView imageView = view.findViewById(R.id.postImgView);
         TextView textViewAuthor = view.findViewById(R.id.txtViewName);
@@ -114,9 +109,9 @@ public class PostFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
         textViewAuthor.setText(textViewAuthor.getText().toString() + mParam1.getUsername());
         textViewDescription.setText(textViewDescription .getText().toString() + mParam1.getDescription());
-        Log.d("kekw","😎"+mParam3.getTipo());
-        if (mParam1.getEspecialista().equals("") || mParam1.getEspecialista().equals(mParam3.getTipo())) {
-            if(mParam3.getTipo().equals("Perito")){
+        Log.d("kekw","😎"+ mParam2.getTipo());
+        if (mParam1.getEspecialista().equals("") || mParam1.getEspecialista().equals(mParam2.getTipo())) {
+            if(mParam2.getTipo().equals("Perito")){
                 btnEdit = view.findViewById(R.id.btnEspecialista);
                 btnEdit.setVisibility(View.VISIBLE);
                 btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -200,7 +195,7 @@ public class PostFragment extends Fragment {
         else {
             String username = mParam1.getUsername();
             String description = mParam1.getDescription();
-            String especialista = mParam3.getUsername();
+            String especialista = mParam2.getUsername();
             GeoPoint location = mParam1.getLocation();
             Date date = mParam1.getDate();
             String photoURL =mParam1.getPhotoURL();
