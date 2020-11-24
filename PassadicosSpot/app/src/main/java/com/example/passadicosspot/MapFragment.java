@@ -252,10 +252,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         }
 
         putImageInStorage(x,bitmap,"",description,location);
-        carregarImagens();
+
     }
 
-    private void putImageInStorage(StorageReference storageReference, Bitmap bitmap, final String key, String description, final Location location){
+    private void putImageInStorage(StorageReference storageReference,final Bitmap bitmap, final String key, String description, final Location location){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
         byte[] byteArray =  out.toByteArray();
@@ -269,6 +269,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
                 db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
                 Log.d("kekw",name);
+                Marker newMarker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .title(ImageReference.getUsername())
+                        .snippet(String.valueOf(listaImages.size())));
+                int m = listaImages.size();
+                listaImages.add(ImageReference);
+                mbitmaps.put(String.valueOf(m),bitmap);
             }
             else{
                 Log.d("kekw","Houston we have a problem");
