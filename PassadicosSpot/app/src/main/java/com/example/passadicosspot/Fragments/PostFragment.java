@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +19,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.passadicosspot.Adapters.AnimalListAdapter;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +55,8 @@ public class PostFragment extends Fragment {
     private Button btnConfirm;
     private Button btnCancel;
     private Button btnEdit;
+    private LinkedList<String> mAnimalList;
+    private RecyclerView recyclerView;
 
     public PostFragment() {
         // Required empty public constructor
@@ -86,7 +96,6 @@ public class PostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //TODO: RecyclerView
         Log.d("kekw","🤡1"+mParam1.toString());
         Log.d("kekw","🤡2"+mParam2.toString());
         Log.d("kekw","🤡3"+mParam3.toString());
@@ -95,6 +104,10 @@ public class PostFragment extends Fragment {
         TextView textViewAuthor = view.findViewById(R.id.txtViewName);
         TextView textViewDescription = view.findViewById(R.id.txtViewDesc);
         TextView textViewEspecialista = view.findViewById(R.id.txtViewEspecialista);
+        recyclerView = view.findViewById(R.id.rcviewAnimais);
+        mAnimalList = new LinkedList<>(mParam1.getAnimaisIdentificados());
+        recyclerView.setAdapter(new AnimalListAdapter(getContext(),mAnimalList));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         editText = view.findViewById(R.id.editTxtAnimais);
         btnAdd = view.findViewById(R.id.btnAddAnimal);
         btnConfirm = view.findViewById(R.id.btnConfirm);
@@ -116,24 +129,19 @@ public class PostFragment extends Fragment {
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                //TODO: Adicionar ao RecyclerView
+                                addAnimal();
                             }
                         });
                         btnConfirm.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                //TODO: Função de enviar os dados para lá
+                                confirmImagem();
                             }
                         });
                         btnCancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                editText.setVisibility(View.INVISIBLE);
-                                btnAdd.setVisibility(View.INVISIBLE);
-                                btnConfirm.setVisibility(View.INVISIBLE);
-                                btnEdit.setVisibility(View.VISIBLE);
-                                view.setVisibility(View.INVISIBLE);
-                                //TODO: RecyclerView resetar
+                                cancelOperation();
                             }
                         });
                         view.setVisibility(View.INVISIBLE);
@@ -162,5 +170,56 @@ public class PostFragment extends Fragment {
         });
         //imageView.setImageBitmap(mParam2);
         return view;
+    }
+
+    public void addAnimal(){
+        Log.d("kekw", "onClick: "+editText.getText().toString());
+        if (editText.getText().toString().equals("")){
+            //TODO: fazer Toast
+        }
+        else {
+
+            String novoAnimal = editText.getText().toString();
+            int animalListSize = mAnimalList.size();
+
+            mAnimalList.addLast(novoAnimal);
+
+            recyclerView.getAdapter().notifyItemInserted(animalListSize);
+
+            recyclerView.smoothScrollToPosition(animalListSize);
+
+            editText.setText("");
+        }
+    }
+
+    public void confirmImagem(){
+        //TODO: Função de enviar os dados para lá
+        if (new LinkedList<>(mParam1.getAnimaisIdentificados()).equals(mAnimalList)){
+            //TODO: Toast são iguais
+        }
+        else {
+            String username = mParam1.getUsername();
+            String description = mParam1.getDescription();
+            String especialista = mParam3.getUsername();
+            GeoPoint location = mParam1.getLocation();
+            Date date = mParam1.getDate();
+            String photoURL =mParam1.getPhotoURL();
+            ArrayList<String> animais = new ArrayList<>(mAnimalList);
+            Imagem novaImagem = new Imagem(description, especialista, location, photoURL, username, animais, date);
+
+            //TODO: Inserir nova Imagem com Query usando a antiga em mParam1
+
+        }
+    }
+
+    public void cancelOperation(){
+        editText.setVisibility(View.INVISIBLE);
+        btnAdd.setVisibility(View.INVISIBLE);
+        btnConfirm.setVisibility(View.INVISIBLE);
+        btnEdit.setVisibility(View.VISIBLE);
+        btnCancel.setVisibility(View.INVISIBLE);
+        mAnimalList = new LinkedList<>(mParam1.getAnimaisIdentificados());
+        recyclerView.setAdapter(new AnimalListAdapter(getContext(),mAnimalList));
+        editText.setText("");
     }
 }

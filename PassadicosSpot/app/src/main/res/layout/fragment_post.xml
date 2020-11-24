@@ -65,20 +65,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/rcviewAnimais"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="@+id/textView2" />
 
     <Button
         android:id="@+id/btnAddAnimal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Adicionar"
-        app:layout_constraintStart_toEndOf="@+id/rcviewAnimais"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtAnimais"
-        android:visibility="invisible"/>
+        android:text="+"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/editTxtAnimais"
+        app:layout_constraintTop_toTopOf="@+id/editTxtAnimais" />
 
     <Button
         android:id="@+id/btnConfirm"

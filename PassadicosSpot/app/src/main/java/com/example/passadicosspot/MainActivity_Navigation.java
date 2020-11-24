@@ -141,7 +141,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
         db.collection("Users").add(x);
         Toast.makeText(this, "Utilizador " + types.get(checkedItem), Toast.LENGTH_SHORT).show();
     }
-    public String getUsename(){
+    public String getUsername(){
         return mUsername;
     }
     public FirebaseAuth getAuth() {return mFirebaseAuth;}

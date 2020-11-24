@@ -32,7 +32,6 @@ import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.ProjectConstants;
-import com.example.passadicosspot.classes.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -219,7 +218,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("param1", listaImages.get(Integer.valueOf(marker.getSnippet())));
                 bundle.putParcelable("param2", mbitmaps.get(marker.getSnippet()));
-                bundle.putSerializable("param3", new User(((MainActivity_Navigation)getActivity()).getUsename(),((MainActivity_Navigation)getActivity()).getTypeUser()));
+                bundle.putSerializable("param3",  ((MainActivity_Navigation)getActivity()).getUser());
                 Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_mapFragment_to_postFragment, bundle);
             }
         });
@@ -250,11 +249,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
 
         Log.d("kekw", description);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = ((MainActivity_Navigation) getActivity()).getUsename() + "_" + timeStamp + ".png";
+        String imageFileName = ((MainActivity_Navigation) getActivity()).getUsername() + "_" + timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
         Location location = null;
-        //TODO: pôr permissões ACHO QUE FUNCIONA
-
         try {
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }catch (SecurityException e){
@@ -276,7 +273,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 String imageUrl = baseURL + name;
                 Date timeStamp = new Date(); //Já dá a forma certa do date
                 //Desta forma acho que resulta
-                Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsename(), ArrayVazio, timeStamp);
+                Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsername(), ArrayVazio, timeStamp);
                 db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
                 Log.d("kekw",name);
                 Marker newMarker = mMap.addMarker(new MarkerOptions()
