@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.passadicosspot.Adapters.FeedAdapter;
 import com.example.passadicosspot.MainActivity;
 import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.SignInActivity;
+import com.example.passadicosspot.classes.Imagem;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +52,16 @@ public class ProfileFragment extends Fragment {
     private TextView user_profile_name;
     private TextView user_type;
 
+
+    private FirebaseFirestore db= FirebaseFirestore.getInstance();
+
+
+
+
+    //RecyclerView stuff
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private FeedAdapter feedAdapter;
 
 
     public ProfileFragment() {
@@ -111,8 +128,22 @@ public class ProfileFragment extends Fragment {
         //
         user_type=view.findViewById(R.id.user_type);
         user_type.setText(((MainActivity_Navigation)getActivity()).getTypeUser());
-
-
+        //
+        recyclerView= view.findViewById(R.id.recyclerview);
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("Username",((MainActivity_Navigation)getActivity()).getUsename());
+        FirestoreRecyclerOptions<Imagem> options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
+        feedAdapter = new FeedAdapter(options);
+        feedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                recyclerView.scrollToPosition(feedAdapter.getItemCount()-1);
+            }
+        });
+        recyclerView.setAdapter(feedAdapter);
+        //
         return  view;
     }
 
@@ -124,6 +155,16 @@ public class ProfileFragment extends Fragment {
         //((MainActivity_Navigation)getActivity()).getUsename()= "anonymous" ;
         startActivity(new Intent(this.getContext(), SignInActivity.class));
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        feedAdapter.startListening();
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        feedAdapter.stopListening();
+    }
 
 }
