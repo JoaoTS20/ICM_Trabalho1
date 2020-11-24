@@ -1,6 +1,8 @@
 package com.example.passadicosspot.classes;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String username;
     private String tipo;
 
