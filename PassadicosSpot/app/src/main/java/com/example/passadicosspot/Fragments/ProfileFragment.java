@@ -3,6 +3,7 @@ package com.example.passadicosspot.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.passadicosspot.Adapters.FeedAdapter;
+import com.example.passadicosspot.MainActivity;
 import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.SignInActivity;
@@ -130,7 +133,7 @@ public class ProfileFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("Username",((MainActivity_Navigation)getActivity()).getUsername());
+        Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("username",((MainActivity_Navigation)getActivity()).getUsername());
         FirestoreRecyclerOptions<Imagem> options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
         feedAdapter = new FeedAdapter(options);
         feedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

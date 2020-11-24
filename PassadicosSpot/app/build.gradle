@@ -56,6 +56,11 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:2.1.0'
     implementation 'com.google.maps.android:maps-utils-ktx:2.2.0'
 
+
+    // Declare the dependencies for the Firebase Cloud Messaging and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-messaging'
+
 }
 
 apply plugin: 'com.android.application'
