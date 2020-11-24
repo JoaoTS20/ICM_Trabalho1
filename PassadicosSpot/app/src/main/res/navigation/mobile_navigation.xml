@@ -27,7 +27,7 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/postFragment"
-        android:name="com.example.passadicosspot.PostFragment"
+        android:name="com.example.passadicosspot.Fragments.PostFragment"
         android:label="fragment_post"
         tools:layout="@layout/fragment_post"
         >

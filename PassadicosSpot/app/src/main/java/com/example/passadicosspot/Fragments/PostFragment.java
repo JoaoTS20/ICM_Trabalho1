@@ -1,4 +1,4 @@
-package com.example.passadicosspot;
+package com.example.passadicosspot.Fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.User;
 

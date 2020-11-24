@@ -3,16 +3,23 @@ package com.example.passadicosspot.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.passadicosspot.MainActivity;
 import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.SignInActivity;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +36,16 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
+
+
+    private ImageView logout;
+    private ImageButton user_profile_photo;
+    private TextView user_profile_name;
+    private TextView user_type;
+
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -67,8 +84,23 @@ public class ProfileFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        Button button = (Button) view.findViewById(R.id.logoutButton);
-        button.setOnClickListener(new View.OnClickListener()
+
+        //
+        user_profile_name = view.findViewById(R.id.user_profile_name);
+        user_profile_name.setText(((MainActivity_Navigation)getActivity()).getUsename());
+        //
+        user_profile_photo= view.findViewById(R.id.user_profile_photo);
+        FirebaseUser User = ((MainActivity_Navigation)getActivity()).getmFirebaseUser();
+        if (User.getPhotoUrl() == null) {
+            Glide.with(view).load(R.drawable.ic_baseline_account_circle_24).into(user_profile_photo);
+        } else {
+            Glide.with(view)
+                    .load(User.getPhotoUrl())
+                    .into(user_profile_photo);
+        }
+        //
+        logout = view.findViewById(R.id.logoutIcon);
+        logout.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -76,6 +108,11 @@ public class ProfileFragment extends Fragment {
                 logout();
             }
         });
+        //
+        user_type=view.findViewById(R.id.user_type);
+        user_type.setText(((MainActivity_Navigation)getActivity()).getTypeUser());
+
+
         return  view;
     }
 

@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
@@ -30,7 +29,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.passadicosspot.MainActivity_Navigation;
-import com.example.passadicosspot.PostFragment;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.ProjectConstants;

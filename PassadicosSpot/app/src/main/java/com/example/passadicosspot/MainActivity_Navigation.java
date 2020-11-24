@@ -145,5 +145,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
         return mUsername;
     }
     public FirebaseAuth getAuth() {return mFirebaseAuth;}
+    public FirebaseUser getmFirebaseUser() {return mFirebaseUser;}
     public  GoogleSignInClient getClient(){return mSignInClient;}
+    public String getTypeUser(){return TypeUser;}
 }
