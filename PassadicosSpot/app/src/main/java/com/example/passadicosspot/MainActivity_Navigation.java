@@ -1,5 +1,6 @@
 package com.example.passadicosspot;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,10 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -80,18 +83,23 @@ public class MainActivity_Navigation extends AppCompatActivity {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
         }
-        FirebaseMessaging.getInstance().subscribeToTopic("UserPost")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+        //
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("DATA_EXTRAS", "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
 
-                        if (task.isSuccessful()) {
-                            Log.d("Notification", "Sucess");
-                        }
-                        Log.d("Notification", "Sucess");
-                        Toast.makeText(MainActivity_Navigation.this, "Teste Notificação", Toast.LENGTH_SHORT).show();
-                    }
-                });
+
+        //TODO: IF NORMAL SUBSCREVER O NORMAL IF PERITO SUBSCREVER ESTE
+        FirebaseMessaging.getInstance().subscribeToTopic("UserPost");
+
+
+
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -155,6 +163,11 @@ public class MainActivity_Navigation extends AppCompatActivity {
         db.collection("Users").add(x);
         Toast.makeText(this, "Utilizador " + types.get(checkedItem), Toast.LENGTH_SHORT).show();
     }
+
+
+
+
+
     public String getUsername(){
         return mUsername;
     }
