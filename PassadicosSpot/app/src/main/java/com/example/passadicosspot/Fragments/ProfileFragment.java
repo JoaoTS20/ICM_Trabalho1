@@ -133,7 +133,7 @@ public class ProfileFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("Username",((MainActivity_Navigation)getActivity()).getUsename());
+        Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("username",((MainActivity_Navigation)getActivity()).getUsename());
         FirestoreRecyclerOptions<Imagem> options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
         feedAdapter = new FeedAdapter(options);
         feedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

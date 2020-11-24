@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -79,6 +80,18 @@ public class MainActivity_Navigation extends AppCompatActivity {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
         }
+        FirebaseMessaging.getInstance().subscribeToTopic("UserPost")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+                            Log.d("Notification", "Sucess");
+                        }
+                        Log.d("Notification", "Sucess");
+                        Toast.makeText(MainActivity_Navigation.this, "Teste Notificação", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -108,6 +121,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
                 }
             }
         });
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         if (getSupportActionBar() != null) {
