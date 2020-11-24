@@ -1,4 +1,4 @@
-package com.example.passadicosspot;
+package com.example.passadicosspot.classes;
 
 import com.google.android.gms.maps.model.LatLng;
 

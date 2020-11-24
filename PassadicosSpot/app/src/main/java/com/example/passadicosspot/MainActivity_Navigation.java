@@ -5,7 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
+import com.example.passadicosspot.classes.Imagem;
+import com.example.passadicosspot.classes.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -19,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -47,6 +52,8 @@ public class MainActivity_Navigation extends AppCompatActivity {
 
     //Variables for App stuff
     private FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+    private int checkedItem;
+    private ArrayList<String> types = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, SignInActivity.class));
             finish();
+            //displaySingleSelectionDialog();
             return;
         } else {
             mUsername = mFirebaseUser.getDisplayName();
@@ -77,19 +85,25 @@ public class MainActivity_Navigation extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
-        //TODO: FAZER esta seleção com firestore em vez daquele if com whereEqualsto
-        db.collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+        db.collection("Users").whereEqualTo("username", mUsername).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        User x= document.toObject(User.class);
-                        if(x.getUsername().equals(mUsername)){
-                            TypeUser=x.getTipo();
+                    if(task.getResult().size()>0){
+                        for(QueryDocumentSnapshot document : task.getResult()) {
+                            User x = document.toObject(User.class);
+                            if (x.getUsername().equals(mUsername)) {
+                                TypeUser = x.getTipo();
+                            }
                         }
-                        Log.d("TYPE", "TYPE:"+ TypeUser );
                     }
-                } else{
+                    else{
+                            displaySingleSelectionDialog();
+                        }
+                    Log.d("TYPEUSER", "TYPE:"+ TypeUser );
+                    } else{
+
                     Log.d("ErroDB", "Erro em Obter os Dados!");
                 }
             }
@@ -108,7 +122,25 @@ public class MainActivity_Navigation extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
+    private void displaySingleSelectionDialog() {
 
+        types.add("Normal");
+        types.add("Perito");
+        String[] adapter = types.toArray(new String[0]);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Qual o tipo de utilizador?");
+        dialogBuilder.setSingleChoiceItems( adapter, checkedItem,
+                (dialogInterface, which) -> {
+                    checkedItem = which;
+                });
+        dialogBuilder.setPositiveButton("Done", (dialog, which) -> showSelectedVersion());
+        dialogBuilder.create().show();
+    }
+    private void showSelectedVersion() {
+        User x = new User(mUsername,types.get(checkedItem));
+        db.collection("Users").add(x);
+        Toast.makeText(this, "Utilizador " + types.get(checkedItem), Toast.LENGTH_SHORT).show();
+    }
     public String getUsename(){
         return mUsername;
     }

@@ -1,4 +1,4 @@
-package com.example.passadicosspot;
+package com.example.passadicosspot.classes;
 
 import com.google.firebase.firestore.GeoPoint;
 
