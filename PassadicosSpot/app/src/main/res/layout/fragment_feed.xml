@@ -18,7 +18,10 @@
         android:id="@+id/floatingActionButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="35dp"
         android:clickable="true"
+        app:backgroundTint="#3F51B5"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

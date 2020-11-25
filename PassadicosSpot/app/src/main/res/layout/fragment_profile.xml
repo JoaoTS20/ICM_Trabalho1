@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_banner_foreground" />
+        android:src="@drawable/passadico_do_paiva_fundo" />
 
     <ImageButton
         android:id="@+id/user_profile_photo"

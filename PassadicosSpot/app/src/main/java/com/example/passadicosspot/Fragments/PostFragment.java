@@ -3,7 +3,6 @@ package com.example.passadicosspot.Fragments;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -22,9 +21,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.passadicosspot.Adapters.AnimalListAdapter;
-import com.example.passadicosspot.Adapters.FeedAdapter;
-import com.example.passadicosspot.MainActivity;
-import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.User;

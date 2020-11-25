@@ -15,9 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PassadicosSpot">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main__navigation"></activity>
         <activity android:name=".SignInActivity" />
         <activity android:name=".MainActivity_Navigation">
             <intent-filter>
