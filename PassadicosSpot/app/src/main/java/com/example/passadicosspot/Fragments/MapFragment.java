@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -32,6 +34,7 @@ import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.example.passadicosspot.classes.ProjectConstants;
+import com.example.passadicosspot.classes.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -78,6 +81,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
     private LocationManager mLocationManager;
     public static ArrayList<String> ArrayVazio = new ArrayList<>();
     private SupportMapFragment mapFragment;
+    private ArrayList<String> sentidos = new ArrayList<>();
+    private int checkedItem;
+    private GeoPoint fim;
 
     public MapFragment() {
         // Required empty public constructor
@@ -104,6 +110,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 dispatchTakePictureIntent();
             }
         });
+        view.findViewById(R.id.floatingActionButtonRota).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){Rota();}
+        });
         mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.getActivity(),
@@ -115,6 +125,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         return view;
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -123,6 +134,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         //checkLocationPermission();
         carregarImagens();
     }
+
+    private void Rota() {
+        sentidos.add("Areinho -> Espiunca");
+        sentidos.add("Espiunca ->Areinho");
+        String[] adapter = sentidos.toArray(new String[0]);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        dialogBuilder.setTitle("Qual o sentido do Percurso?");
+        dialogBuilder.setSingleChoiceItems( adapter, checkedItem,
+                (dialogInterface, which) -> {
+                    checkedItem = which;
+                });
+        dialogBuilder.setPositiveButton("Done", (dialog, which) -> DeterminarFim());
+        dialogBuilder.create().show();
+    }
+    private void DeterminarFim() {
+        if(checkedItem==1){
+            fim = new GeoPoint(40.9932033, -8.2113233);
+        }
+        else{
+            fim = new GeoPoint(40.9529338,-8.1767019);
+        }
+        //CalcularTempo(fim);
+    }
+
 
     private void carregarImagens() {
         listaImages = new ArrayList<>();
