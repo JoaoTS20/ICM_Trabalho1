@@ -175,6 +175,7 @@ public class PostFragment extends Fragment {
             Log.d("kekw",mParam1.toString());
             db.collection("Imagens").document(mParam1.getId()).update("animaisIdentificados",animais);
             db.collection("Imagens").document(mParam1.getId()).update("especialista",especialista);
+            Toast.makeText(getContext(),"A sua alteração foi feita com sucesso",Toast.LENGTH_LONG);
             Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_postFragment_to_mapFragment);
         }
     }
