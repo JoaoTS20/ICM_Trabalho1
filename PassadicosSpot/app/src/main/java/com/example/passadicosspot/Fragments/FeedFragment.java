@@ -27,7 +27,7 @@ import com.google.firebase.firestore.Query;
  */
 public class FeedFragment extends Fragment {
 
-    private boolean justSpecialist = false;
+    private boolean justNoSpecialist = false;
     // the fragment initialization parameters
     private static final String IMAGES_LIST = "list";
     private static final String DATABASE = "database";
@@ -78,6 +78,34 @@ public class FeedFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         //
+        view.findViewById(R.id.floatingActionButton2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirestoreRecyclerOptions<Imagem> options = null;
+                if (justNoSpecialist) {
+                    Query query = FirebaseFirestore.getInstance().collection("Imagens").whereNotEqualTo("username", ((MainActivity_Navigation) getActivity()).getUsername());
+                    options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
+                }
+                else {
+                    Query query = FirebaseFirestore.getInstance().collection("Imagens")
+                            .whereNotEqualTo("username", ((MainActivity_Navigation) getActivity()).getUsername())
+                            .whereEqualTo("especialista","");
+                    options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
+
+                }
+                justNoSpecialist = !justNoSpecialist;
+                feedAdapter = new FeedAdapter(options, new FeedAdapter.OnRecyclerItemClickListener() {
+                    @Override
+                    public void OnRecyclerItemClick(Imagem i) {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("param1", i);
+                        bundle.putSerializable("param2", ((MainActivity_Navigation) getActivity()).getUser());
+                        Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_feedFragment_to_postFragment, bundle);
+
+                    }});
+
+            }
+        });
         recyclerView= view.findViewById(R.id.recyclerview);
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setStackFromEnd(true);
