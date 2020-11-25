@@ -3,6 +3,7 @@ package com.example.passadicosspot.Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.passadicosspot.Adapters.FeedAdapter;
+import com.example.passadicosspot.MainActivity_Navigation;
 import com.example.passadicosspot.R;
 import com.example.passadicosspot.classes.Imagem;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -82,7 +84,16 @@ public class FeedFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         Query query = FirebaseFirestore.getInstance().collection("Imagens");
         FirestoreRecyclerOptions<Imagem> options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
-        feedAdapter = new FeedAdapter(options);
+        feedAdapter = new FeedAdapter(options, new FeedAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void OnRecyclerItemClick(Imagem i) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("param1", i);
+                bundle.putSerializable("param2", ((MainActivity_Navigation) getActivity()).getUser());
+                Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_feedFragment_to_postFragment, bundle);
+
+            }
+        });
         feedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {

@@ -24,6 +24,11 @@ import com.google.firebase.storage.StorageReference;
 
 public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.ViewHolder> {
     StorageReference x;
+    private OnRecyclerItemClickListener clickListener;
+
+    public interface OnRecyclerItemClickListener{
+        void OnRecyclerItemClick(Imagem i);
+    }
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -35,11 +40,24 @@ public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.Vi
         super(options);
     }
 
+    public FeedAdapter(@NonNull FirestoreRecyclerOptions<Imagem> options, OnRecyclerItemClickListener onclickrecycler) {
+        super(options);
+        clickListener = onclickrecycler;
+    }
+
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull Imagem model) {
         holder.user.setText(model.getUsername());
         holder.description.setText(model.getDescription());
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String id = getSnapshots().getSnapshot(position).getId();
+                Imagem i = model;
+                i.setId(id);
+                clickListener.OnRecyclerItemClick(i);
+            }
+        });
         x = FirebaseStorage.getInstance().getReferenceFromUrl(model.getPhotoURL());
         x.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override

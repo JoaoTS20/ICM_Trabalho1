@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -135,7 +136,16 @@ public class ProfileFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         Query query = FirebaseFirestore.getInstance().collection("Imagens").whereEqualTo("username",((MainActivity_Navigation)getActivity()).getUsername());
         FirestoreRecyclerOptions<Imagem> options = new FirestoreRecyclerOptions.Builder<Imagem>().setQuery(query, Imagem.class).build();
-        feedAdapter = new FeedAdapter(options);
+        feedAdapter = new FeedAdapter(options, new FeedAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void OnRecyclerItemClick(Imagem i) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("param1", i);
+                bundle.putSerializable("param2", ((MainActivity_Navigation) getActivity()).getUser());
+                Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_profileFragment_to_postFragment, bundle);
+
+            }
+        });
         feedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
