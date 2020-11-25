@@ -178,10 +178,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                     displayTime.setText("Faltam cerca de "+ Math.round(temporestante)+ " minutos");
                 }
             }
+        /*
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
 
-
-
-        };
+        }
+       de
+         */
+    };
 
 
     private void carregarImagens() {
