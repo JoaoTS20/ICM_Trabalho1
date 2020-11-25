@@ -48,5 +48,8 @@
         <argument
             android:name="user"
             app:argType="com.example.passadicosspot.classes.User" />
+        <action
+            android:id="@+id/action_postFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
 </navigation>
