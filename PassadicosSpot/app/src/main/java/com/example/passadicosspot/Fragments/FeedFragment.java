@@ -103,7 +103,6 @@ public class FeedFragment extends Fragment {
                         Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_feedFragment_to_postFragment, bundle);
 
                     }});
-
             }
         });
         recyclerView= view.findViewById(R.id.recyclerview);
