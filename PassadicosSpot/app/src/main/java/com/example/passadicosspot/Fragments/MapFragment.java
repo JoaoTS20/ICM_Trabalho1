@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -84,7 +85,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
     private ArrayList<String> sentidos = new ArrayList<>();
     private int checkedItem;
     private GeoPoint fim;
-
+    private double maxDistancia = Math.sqrt(Math.pow(-8.2113233 - -8.1767019, 2) + Math.pow(40.9932033 - 40.9529338, 2));
+    private int tempoPrevisto = 150;
+    private TextView displayTime;
     public MapFragment() {
         // Required empty public constructor
     }
@@ -104,15 +107,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        displayTime= view.findViewById(R.id.textViewTime);
         view.findViewById(R.id.floatingActionButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
-        view.findViewById(R.id.floatingActionButtonRota).setOnClickListener(new View.OnClickListener(){
+        view.findViewById(R.id.floatingActionButtonRota).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){Rota();}
+            public void onClick(View view) {
+                Rota(view);
+
+            }
         });
         mLocationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
         if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -133,30 +140,48 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //checkLocationPermission();
         carregarImagens();
+
     }
 
-    private void Rota() {
+    private void Rota(View view) {
         sentidos.add("Areinho -> Espiunca");
         sentidos.add("Espiunca ->Areinho");
         String[] adapter = sentidos.toArray(new String[0]);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         dialogBuilder.setTitle("Qual o sentido do Percurso?");
-        dialogBuilder.setSingleChoiceItems( adapter, checkedItem,
+        dialogBuilder.setSingleChoiceItems(adapter, checkedItem,
                 (dialogInterface, which) -> {
                     checkedItem = which;
                 });
-        dialogBuilder.setPositiveButton("Done", (dialog, which) -> DeterminarFim());
+        dialogBuilder.setPositiveButton("Done", (dialog, which) -> DeterminarFim(view));
         dialogBuilder.create().show();
     }
-    private void DeterminarFim() {
-        if(checkedItem==1){
+
+    private void DeterminarFim(View view) {
+        if (checkedItem == 0) {
             fim = new GeoPoint(40.9932033, -8.2113233);
+        } else {
+            fim = new GeoPoint(40.9529338, -8.1767019);
         }
-        else{
-            fim = new GeoPoint(40.9529338,-8.1767019);
-        }
-        //CalcularTempo(fim);
+        displayTime.setVisibility(view.VISIBLE);
+        Log.d("Rota", sentidos.get(checkedItem));
     }
+
+    LocationListener listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                if(fim!=null) {
+                    double distancia = Math.sqrt(Math.pow(fim.getLongitude() - location.getLongitude(), 2) + Math.pow(fim.getLatitude() - location.getLatitude(), 2));
+                    Log.d("Distancia", distancia + "");
+                    double temporestante = (distancia * tempoPrevisto) / maxDistancia;
+                    Log.d("Minutos", temporestante + "m");
+                    displayTime.setText("Faltam cerca de "+ Math.round(temporestante)+ " minutos");
+                }
+            }
+
+
+
+        };
 
 
     private void carregarImagens() {
@@ -267,6 +292,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, listener);
+
     }
 
 
