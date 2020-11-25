@@ -3,6 +3,7 @@ package com.example.passadicosspot.Fragments;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -207,7 +208,7 @@ public class PostFragment extends Fragment {
             ArrayList<String> animais = new ArrayList<>(mAnimalList);
             Imagem novaImagem = new Imagem(description, especialista, location, photoURL, username, animais, date);
             db.collection("Imagens").document(mParam1.getId()).update("animaisIdentificados",animais);
-
+            db.collection("Imagens").document(mParam1.getId()).update("especialista",especialista);
             //TODO: Inserir nova Imagem com Query usando a antiga em mParam1
 
         }
