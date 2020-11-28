@@ -82,7 +82,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
     private LocationManager mLocationManager;
     public static ArrayList<String> ArrayVazio = new ArrayList<>();
     private SupportMapFragment mapFragment;
-    private ArrayList<String> sentidos = new ArrayList<>();
+    private ArrayList<String> sentidos = ProjectConstants.sentidos;
     private int checkedItem;
     private GeoPoint fim;
     private double maxDistancia = Math.sqrt(Math.pow(-8.2113233 - -8.1767019, 2) + Math.pow(40.9932033 - 40.9529338, 2));
@@ -138,14 +138,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
 
         super.onViewCreated(view, savedInstanceState);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        //checkLocationPermission();
         carregarImagens();
 
     }
 
     private void Rota(View view) {
-        sentidos.add("Areinho -> Espiunca");
-        sentidos.add("Espiunca ->Areinho");
         String[] adapter = sentidos.toArray(new String[0]);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         dialogBuilder.setTitle("Qual o sentido do Percurso?");
@@ -164,7 +161,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             fim = new GeoPoint(40.9529338, -8.1767019);
         }
         displayTime.setVisibility(view.VISIBLE);
-        Log.d("Rota", sentidos.get(checkedItem));
+        Log.d("MapFragment-Rota", sentidos.get(checkedItem));
     }
 
     LocationListener listener = new LocationListener() {
@@ -172,19 +169,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             public void onLocationChanged(@NonNull Location location) {
                 if(fim!=null) {
                     double distancia = Math.sqrt(Math.pow(fim.getLongitude() - location.getLongitude(), 2) + Math.pow(fim.getLatitude() - location.getLatitude(), 2));
-                    Log.d("Distancia", distancia + "");
+                    Log.d("MapFragment-Distancia", distancia + "");
                     double temporestante = (distancia * tempoPrevisto) / maxDistancia;
-                    Log.d("Minutos", temporestante + "m");
+                    Log.d("MapFragment-Minutos", temporestante + "m");
                     displayTime.setText("Faltam cerca de "+ Math.round(temporestante)+ " minutos");
                 }
             }
-        /*
+
+
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
+            // no meu emulador dá erro aqui não sei porquê
+            // por isso tivemos de pôr esta função
         }
-       de
-         */
+
     };
 
 
@@ -220,7 +218,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         PolylineOptions pOptions = new PolylineOptions();
         pOptions.addAll(Arrays.asList(ProjectConstants.route));
         Polyline polyline1 = googleMap.addPolyline(pOptions);
-        LatLng MELBOURNE = new LatLng(40.9928911, -8.2113895);
         for (int j = 0; j < listaImages.size(); j++) {
             Imagem i = listaImages.get(j);
             mMap.addMarker(new MarkerOptions()
@@ -236,7 +233,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         String downloadUrl = task.getResult().toString();
-                        //Looper.prepare();
 
                         Glide.with(imageView)
                                 .asBitmap()
@@ -255,7 +251,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                                 });
 
                         mImageViews.put(String.valueOf(key), imageView);
-                        Log.d("kekw", "😂 successful");
+                        Log.d("MapFragment-PostImage", "Successful");
 
                     } else {
                         Log.w("ErroImagem", "Getting download url was not successful.",
@@ -264,10 +260,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 }
             });
             mImages.put(String.valueOf(j), i);
-            Log.d("kekw", i.toString());
         }
         mMap.setInfoWindowAdapter(new Custom_InfoAdapter(mImages));
-        //melbourne.showInfoWindow();
         UiSettings u = mMap.getUiSettings();
         u.setTiltGesturesEnabled(false);
         u.setZoomControlsEnabled(true);
@@ -275,9 +269,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                //FragmentTransaction ft= getActivity().getSupportFragmentManager().beginTransaction();
-                //listaImages.get(Integer.valueOf(marker.getSnippet()));
-                Log.d("kekw", mbitmaps.get(marker.getSnippet()).toString());
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("param1", listaImages.get(Integer.valueOf(marker.getSnippet())));
@@ -288,13 +279,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
 
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -325,7 +309,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
     public void onDialogDismissListener(Bitmap bitmap, String description) {
         mbitmaps.put("1", bitmap);
 
-        Log.d("kekw", description);
+        Log.d("MapFragment-Description", description);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = ((MainActivity_Navigation) getActivity()).getUsername() + "_" + timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
@@ -333,7 +317,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         boolean isLocationinArouca = true;
         try {
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Log.d("MapFragment",location.getLatitude()+","+location.getLongitude());
+            Log.d("MapFragment-location",location.getLatitude()+","+location.getLongitude());
             if (location.getLatitude() < 40.948139526617005
                     || location.getLatitude() > 40.996195057883995
                     || location.getLongitude() < -8.232616201179585
@@ -360,11 +344,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             if (task.isSuccessful()){
                 String name = task.getResult().getMetadata().getReference().getName();
                 String imageUrl = baseURL + name;
-                Date timeStamp = new Date(); //Já dá a forma certa do date
-                //Desta forma acho que resulta
+                Date timeStamp = new Date();
                 Imagem ImageReference = new Imagem(description,"",new GeoPoint(location.getLatitude(),location.getLongitude()),imageUrl,((MainActivity_Navigation)getActivity()).getUsername(), ArrayVazio, timeStamp);
-                db.collection("Imagens").add(ImageReference); //Deve Funcionar e já corregi o problema do id
-                Log.d("kekw",name);
+                db.collection("Imagens").add(ImageReference);
+                Log.d("MapFragment-FileName",name);
                 Marker newMarker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(location.getLatitude(), location.getLongitude()))
                         .title(ImageReference.getUsername())
@@ -374,7 +357,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 mbitmaps.put(String.valueOf(m),bitmap);
             }
             else{
-                Log.d("kekw","Houston we have a problem");
+                Log.d("MapFragment-PutImage","Put Image in Storage Failed");
             }
         });
     }
@@ -386,7 +369,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
             for(String i : mapaImagens.keySet()){
                 s+=i + " " + mapaImagens.get(i).toString();
             }
-            Log.d("s",s);
         }
         @Override
         public View getInfoWindow(Marker marker) {

@@ -2,7 +2,11 @@ package com.example.passadicosspot.classes;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ProjectConstants {
+    public static ArrayList<String> sentidos = new ArrayList<>(Arrays.asList("Areinho -> Espiunca","Espiunca ->Areinho"));
     public static LatLng[] route = new LatLng[]{new LatLng(40.9932033,-8.2113233),new LatLng(40.9932033,-8.2113233),
             new LatLng(40.9928911,-8.2113895),new LatLng(40.9928435,-8.2114054),new LatLng(40.9927909,-8.2114023),
             new LatLng(40.9927618,-8.2113523),new LatLng(40.9927684,-8.211165),new LatLng(40.9927614,-8.2110532),
