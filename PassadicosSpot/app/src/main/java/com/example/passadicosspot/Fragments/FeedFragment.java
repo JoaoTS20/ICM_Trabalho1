@@ -19,12 +19,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-/*
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FeedFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class FeedFragment extends Fragment {
 
     private boolean justNoSpecialist = false;
@@ -75,9 +70,8 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
-        //
         view.findViewById(R.id.floatingActionButton2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

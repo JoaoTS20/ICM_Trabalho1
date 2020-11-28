@@ -94,12 +94,9 @@ public class MainActivity_Navigation extends AppCompatActivity {
         }
         // [END handle_data_extras]
 
-
         //TODO: IF NORMAL SUBSCREVER O NORMAL IF PERITO SUBSCREVER ESTE
         FirebaseMessaging.getInstance().subscribeToTopic("UserPost");
         //FirebaseMessaging.getInstance().send(new RemoteMessage.Builder("sad").setMessageType("Notification").build());
-
-
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -144,6 +141,7 @@ public class MainActivity_Navigation extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
+
     private void displaySingleSelectionDialog() {
 
         types.add("Normal");
@@ -158,14 +156,12 @@ public class MainActivity_Navigation extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Done", (dialog, which) -> showSelectedVersion());
         dialogBuilder.create().show();
     }
+
     private void showSelectedVersion() {
         User x = new User(mUsername,types.get(checkedItem));
         db.collection("Users").add(x);
         Toast.makeText(this, "Utilizador " + types.get(checkedItem), Toast.LENGTH_SHORT).show();
     }
-
-
-
 
 
     public String getUsername(){

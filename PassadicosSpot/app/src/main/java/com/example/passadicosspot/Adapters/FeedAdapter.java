@@ -30,12 +30,6 @@ public class FeedAdapter extends FirestoreRecyclerAdapter<Imagem, FeedAdapter.Vi
         void OnRecyclerItemClick(Imagem i);
     }
 
-    /**
-     * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
-     * FirestoreRecyclerOptions} for configuration options.
-     *
-     * @param options
-     */
     public FeedAdapter(@NonNull FirestoreRecyclerOptions<Imagem> options) {
         super(options);
     }

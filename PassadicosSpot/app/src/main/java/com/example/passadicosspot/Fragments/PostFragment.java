@@ -76,9 +76,8 @@ public class PostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("kekw","🤡1"+mParam1.toString());
-        Log.d("kekw","🤡2"+mParam2.toString());
-        Log.d("kekw","🤡3"+ mParam2.toString());
+        Log.d("PostFragment-Imagem",mParam1.toString());
+        Log.d("PostFragment-User",mParam2.toString());
 
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
@@ -101,7 +100,7 @@ public class PostFragment extends Fragment {
         textViewDescription.setText(textViewDescription .getText().toString() + mParam1.getDescription());
         textViewEspecialista.setText(textViewEspecialista.getText().toString() + mParam1.getEspecialista());
 
-        Log.d("kekw","😎"+ mParam2.getTipo());
+        Log.d("PostFragment-TipoUser",mParam2.getTipo());
 
         if (mParam1.getEspecialista().equals("") || mParam1.getEspecialista().equals(mParam2.getUsername())) {
             if(mParam2.getTipo().equals("Perito")){
@@ -138,7 +137,7 @@ public class PostFragment extends Fragment {
     // Adicionar um animal ao RecyclerView
     // Se o EditText não tiver texto lança um Toast
     private void addAnimal(){
-        Log.d("kekw", "onClick: "+editText.getText().toString());
+        Log.d("PostFragment", "onClick: "+editText.getText().toString());
         if (editText.getText().toString().equals("")){
             Toast.makeText(getActivity(), "Não inseriu nenhum nome de animal", Toast.LENGTH_SHORT).show();
         }
@@ -172,7 +171,9 @@ public class PostFragment extends Fragment {
             String photoURL =mParam1.getPhotoURL();
             ArrayList<String> animais = new ArrayList<>(mAnimalList);
             Imagem novaImagem = new Imagem(description, especialista, location, photoURL, username, animais, date);
-            Log.d("kekw",mParam1.toString());
+
+            Log.d("PostFragment-User",mParam1.toString());
+
             db.collection("Imagens").document(mParam1.getId()).update("animaisIdentificados",animais);
             db.collection("Imagens").document(mParam1.getId()).update("especialista",especialista);
             Toast.makeText(getContext(),"A sua alteração foi feita com sucesso",Toast.LENGTH_LONG);

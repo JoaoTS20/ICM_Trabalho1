@@ -26,35 +26,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-
-
 
     private ImageView logout;
     private ImageButton user_profile_photo;
     private TextView user_profile_name;
     private TextView user_type;
 
-
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
-
-
-
 
     //RecyclerView stuff
     private RecyclerView recyclerView;
@@ -66,15 +51,6 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -97,14 +73,12 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        //
         user_profile_name = view.findViewById(R.id.user_profile_name);
         user_profile_name.setText(((MainActivity_Navigation)getActivity()).getUsername());
-        //
         user_profile_photo= view.findViewById(R.id.user_profile_photo);
+
         FirebaseUser User = ((MainActivity_Navigation)getActivity()).getmFirebaseUser();
         if (User.getPhotoUrl() == null) {
             Glide.with(view).load(R.drawable.ic_baseline_account_circle_24).into(user_profile_photo);
@@ -113,7 +87,7 @@ public class ProfileFragment extends Fragment {
                     .load(User.getPhotoUrl())
                     .into(user_profile_photo);
         }
-        //
+
         logout = view.findViewById(R.id.logoutIcon);
         logout.setOnClickListener(new View.OnClickListener()
         {
@@ -123,10 +97,10 @@ public class ProfileFragment extends Fragment {
                 logout();
             }
         });
-        //
+
         user_type=view.findViewById(R.id.user_type);
         user_type.setText(((MainActivity_Navigation)getActivity()).getTypeUser());
-        //
+
         recyclerView= view.findViewById(R.id.recyclerview);
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setStackFromEnd(true);
@@ -150,7 +124,7 @@ public class ProfileFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(feedAdapter);
-        //
+
         return  view;
     }
 
