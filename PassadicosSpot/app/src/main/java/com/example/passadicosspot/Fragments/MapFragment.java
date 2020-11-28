@@ -285,6 +285,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
                 Navigation.findNavController(getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.action_mapFragment_to_postFragment, bundle);
             }
         });
+
+
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -328,13 +330,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, DialogD
         String imageFileName = ((MainActivity_Navigation) getActivity()).getUsername() + "_" + timeStamp + ".png";
         StorageReference x = FirebaseStorage.getInstance().getReference(imageFileName);
         Location location = null;
+        boolean isLocationinArouca = true;
         try {
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Log.d("MapFragment",location.getLatitude()+","+location.getLongitude());
+            if (location.getLatitude() < 40.948139526617005
+                    || location.getLatitude() > 40.996195057883995
+                    || location.getLongitude() < -8.232616201179585
+                    || location.getLongitude() > -8.160170554061377){
+                Toast.makeText(getActivity(),"Não está perto dos Passadiços!",Toast.LENGTH_LONG).show();
+                isLocationinArouca = false;
+            }
+
         }catch (SecurityException e){
             return;
         }
-
-        putImageInStorage(x,bitmap,"",description,location);
+        if (isLocationinArouca){
+            putImageInStorage(x,bitmap,"",description,location);
+        }
 
     }
 
